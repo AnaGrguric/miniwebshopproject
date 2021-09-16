@@ -1,0 +1,67 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
+    <title>Mini web shop</title>
+</head>
+<body>
+    <h2 class="header">Mini web shop</h2>
+    <div class="container">
+        <div class="row justify-content-center">
+        <div class="main-section">
+            <div class="function-icons">
+                <img src="images/filter.svg" alt="filter-icon" class="btn-filter-products">
+                <img src="images/img-display-one.svg" alt="square-icon" class="btn-one-img">
+                <img src="images/img-display-two.svg" alt="aquare-icon" class="btn-two-img">
+            </div>
+            <div class="filter-popup hidden">
+                <p>Filter by:</p>
+                <div>
+                <input type="checkbox" id="checkbox-price">price</input>
+                </div>
+                <button class="apply-filter">Apply</button>
+            </div>
+            <div class="products">
+                <div class="product">
+                    <button class="btn-add-to-bag">Add to bag</button>
+                </div>
+            </div>
+        </div>
+        <div class="shopping-bag">
+            <h5>Shopping bag:</h5>
+            <div class="added-items">Empty bag :(</div>
+            <div class="full-price">
+                <h6>Total:</h6>
+                <h4 class="final-price">0</h4>
+            </div>
+            <button class="btn-purchase">Order</button>
+        </div>
+        </div>
+        <div class="popup hidden">
+                <label>Nickname:</label>
+                <input type="text" name="" id="name" required>
+                <label for="">16dig number:</label>
+                <input type="tel" id="card-number" maxlength="16" required>
+                <label for="">Address:</label>
+                <input type="text" id="address" required>
+            <button class="confirm-info">Done</button>
+        </div>
+        <div class="mobile-cart">
+            <div class="circle">0</div>
+            <img src="images/cart.svg" alt="cart-icon">
+        </div>
+        <div class="confirmation-popup hidden">
+            <h5>Order is on it's way</h5>
+            <button class="ok">Ok</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="main.js"></script>
+</body>
+</html>
