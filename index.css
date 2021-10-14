@@ -63,6 +63,7 @@ h6.product-name {
     border: 1px solid #333333;
     margin-left: 16px;
     height: fit-content;
+    min-width: 200px;
 }
 
 .cart-items {
@@ -93,11 +94,24 @@ button:hover {
 .popup {
     position: fixed;
     top: 64px;
+    right: 50%;
+    transform: translate(50%, 50%);
     background: #f8f8f8;
     padding: 40px;
     border: 1px solid #333333;
     display: flex;
     flex-direction: column;
+}
+
+label {
+    margin: 0px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+input {
+    border: 1px solid #333333;
+    margin-bottom: 16px;
 }
 
 .confirmation-popup {

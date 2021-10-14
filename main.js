@@ -1,6 +1,6 @@
 const products = document.querySelector(".products");
 const addedItems = document.querySelector(".added-items");
-const totalPrice = document.querySelector(".final-price");
+const total = document.querySelector(".final-price");
 
 const filterPopup = document.querySelector(".filter-popup");
 const btnFilter = document.querySelector(".btn-filter-products");
@@ -13,6 +13,7 @@ const popup = document.querySelector(".popup");
 const inputName = document.querySelector("#name");
 const inputCard = document.querySelector("#card-number");
 const inputAddress = document.querySelector("#address");
+const paymentInfo = document.getElementById("payment-info");
 const confirmationPopup = document.querySelector(".confirmation-popup");
 const btnOk = document.querySelector(".ok");
 
@@ -20,7 +21,7 @@ const filterPrice = document.querySelector("#checkbox-price");
 const btnFilterApply = document.querySelector(".apply-filter");
 
 const mobileCart = document.querySelector(".mobile-cart");
-const numberOfItems = document.querySelector(".circle");
+const circle = document.querySelector(".circle");
 const shoppingBag = document.querySelector(".shopping-bag");
 
 const product1 = {
@@ -30,6 +31,7 @@ const product1 = {
   image: "images/img1.jpeg",
   price: 200,
   size: ["S", "M", "L"],
+  inBag: 0,
 };
 
 const product2 = {
@@ -39,6 +41,7 @@ const product2 = {
   image: "images/img2.jpeg",
   price: 300,
   size: ["S", "M", "L"],
+  inBag: 0,
 };
 
 const product3 = {
@@ -48,15 +51,17 @@ const product3 = {
   image: "images/img3.jpeg",
   price: 300,
   size: ["XS", "M", "L"],
+  inBag: 0,
 };
 
 const product4 = {
-  id: 3,
+  id: 4,
   name: "Short skirt",
   type: "skirt",
   image: "images/img4.jpeg",
   price: 150,
   size: ["XS", "S"],
+  inBag: 0,
 };
 
 const productsArr = [product1, product2, product3, product4];
@@ -64,7 +69,7 @@ const productsArr = [product1, product2, product3, product4];
 products.innerHTML = "";
 
 function productsGallery() {
-  productsArr.forEach((product) => {
+  productsArr.map((product) => {
     const html = `<div class="product">
         <img src="${product.image}" class="product-image"/>
         <h6 class="product-name">${product.name}</h6>
@@ -87,91 +92,157 @@ btnFilter.addEventListener("click", () => {
 });
 
 btnOneImg.addEventListener("click", () => {
-  productImg.forEach((img) => (img.classList.add("product-image-wider")));
-  productImg.forEach((img) => (img.classList.remove("product-image")));
+  productImg.forEach((img) => img.classList.add("product-image-wider"));
+  productImg.forEach((img) => img.classList.remove("product-image"));
   products.classList.add("products-column");
 });
 
 btnTwoImg.addEventListener("click", () => {
-  productImg.forEach((img) => (img.classList.add("product-image")));
-  productImg.forEach((img) => (img.classList.remove("product-image-wider")));
+  productImg.forEach((img) => img.classList.add("product-image"));
+  productImg.forEach((img) => img.classList.remove("product-image-wider"));
   products.classList.remove("products-column");
 });
 
-let btn;
-let listItems;
-let price;
-let prices;
-function addToCart() {
-  for (let i = 0; i < productsArr.length; i++) {
-    btn = btnAdd[i];
-    addedItems.innerHTML = "";
-    var pricesArr;
-    btn.addEventListener("click", () => {
-      listItems = `<div class="cart-items"><h6>${productsArr[i].name}</h6><p>${productsArr[i].price}kn</p></div>`;
-      addedItems.insertAdjacentHTML("afterbegin", listItems);
-      pricesArr = [productsArr[i].price];
-      price = `<p>${pricesArr}\n</p>`;
-      totalPrice.insertAdjacentHTML("beforeend", price);
-      const totalString = totalPrice.textContent.toString();
-      const totalArr = totalString.split("\n");
-      totalPrice.innerHTML = "";
-      price = `<p>${totalArr
-        .map((x) => +x)
-        .reduce((acc, num) => acc + num, 0)}\n</p>`;
-      totalPrice.insertAdjacentHTML("beforeend", price);
-    });
+// Add to cart
+
+btnAdd.forEach((btn, i) => {
+  btn.addEventListener("click", function () {
+    updateShoppingCart(productsArr[i]);
+  });
+});
+
+function updateShoppingCart(p) {
+  let numberOfItems = localStorage.getItem("quantity");
+  numberOfItems = parseInt(numberOfItems);
+
+  if (numberOfItems) {
+    localStorage.setItem("quantity", numberOfItems + 1);
+    circle.textContent = numberOfItems + 1;
+  } else {
+    localStorage.setItem("quantity", 1);
+    circle.textContent = 1;
+  }
+
+  addProducts(p);
+  totalPrice(p);
+  renderShoppingCart();
+}
+
+function addProducts(p) {
+  let addedProducts = localStorage.getItem("products");
+  console.log(addedProducts);
+  addedProducts = JSON.parse(addedProducts);
+
+  if (addedProducts != null) {
+    if (addedProducts[p.id] == undefined) {
+      addedProducts = {
+        ...addedProducts,
+        [p.id]: p,
+      };
+    }
+    addedProducts[p.id].inBag += 1;
+  } else {
+    p.inBag = 1;
+    addedProducts = {
+      [p.id]: p,
+    };
+  }
+
+  localStorage.setItem("products", JSON.stringify(addedProducts));
+}
+
+function onLoad() {
+  /* let productsQuantity = localStorage.getItem("quantity");
+
+  if (productsQuantity) {
+    circle.textContent = productsQuantity;
+  } */
+  localStorage.clear();
+}
+
+onLoad();
+
+function totalPrice(p) {
+  let itemPrice = localStorage.getItem("price");
+  console.log(itemPrice);
+
+  if (itemPrice != null) {
+    itemPrice = parseInt(itemPrice);
+    localStorage.setItem("price", itemPrice + p.price);
+  } else {
+    localStorage.setItem("price", p.price);
   }
 }
 
-addToCart();
-
-
-// payment info 
+function renderShoppingCart() {
+  let productsInBag = localStorage.getItem("products");
+  let productsPrice = localStorage.getItem("price");
+  productsInBag = JSON.parse(productsInBag);
+  if (productsInBag && productsPrice) {
+    addedItems.innerHTML = "";
+    Object.values(productsInBag).map((item) => {
+      addedItems.innerHTML += `<div class="cart-items">
+      <p>${item.name}</p>
+      <p>x${item.inBag}</p>
+      <p>${item.price * item.inBag}</p>
+      </div>`;
+    });
+    total.innerHTML = "";
+    total.insertAdjacentHTML("beforeend", productsPrice);
+  }
+}
+// payment info
 
 btnConfirmInfo.addEventListener("click", () => {
-  const html = `<div id="payment-info">
+  const html = `<div>
     <h6>Payment info:</h6>
-    <p>Name: ${
-      inputName.value == "" ? "name not entered" : inputName.value}</p>
-    <p>Card info: ${inputCard.value.length == 16 ? inputCard.value : "wrong card number"}</p>
-    <p>Address: ${inputAddress.value == "" ? "address not entered" : inputAddress.value}</p>
+    <p>Name: ${inputName.value == "" ? "name not entered" : inputName.value}</p>
+    <p>Card info: ${
+      inputCard.value.length == 16 ? inputCard.value : "wrong card number"
+    }</p>
+    <p>Address: ${
+      inputAddress.value == "" ? "address not entered" : inputAddress.value
+    }</p>
     </div>`;
-  btnPurchase.insertAdjacentHTML("beforebegin", html);
+  paymentInfo.insertAdjacentHTML("afterbegin", html);
   popup.classList.add("hidden");
   btnPurchase.textContent = "Confirm Order";
-  console.log(inputName.value)
 });
 
 btnPurchase.addEventListener("click", () => {
-  if(btnPurchase.textContent === "Confirm Order" && (inputCard.value.length != 16) || inputAddress.value == "address not entered"){
-    btnPurchase.insertAdjacentHTML("beforebegin", `<p>Please enter right information</p>`);
+  if (
+    btnPurchase.textContent === "Confirm Order" &&
+    (inputCard.value.length != 16 ||
+      inputAddress.value === "address not entered" ||
+      inputName.value === "name not entered")
+  ) {
+    paymentInfo.innerHTML = "";
     btnPurchase.textContent = "Change payment info";
-    document.getElementById("payment-info").innerHTML = ""
-  }
-  else if(btnPurchase.textContent === "Confirm Order"){
+  } else if (btnPurchase.textContent === "Confirm Order") {
     confirmationPopup.classList.remove("hidden");
-  }  else{
-  popup.classList.remove("hidden");
+  } else if (addedItems.textContent === "Empty bag :(") {
+    alert("Please add items");
+  } else {
+    popup.classList.remove("hidden");
   }
 });
 
-btnOk.addEventListener("click", ()=> {
+btnOk.addEventListener("click", () => {
   confirmationPopup.classList.add("hidden");
   window.location.reload();
-})
-
+  localStorage.clear();
+});
 
 // Filter
 
-btnFilterApply.addEventListener("click", ()=> {
-  if(filterPrice.value == "on"){
-    productsArr.map(x => x.price)
+btnFilterApply.addEventListener("click", () => {
+  if (filterPrice.value == "on") {
+    productsArr.map((x) => x.price);
   }
 });
 
 // mobile
 
-mobileCart.addEventListener("click", ()=>{
+mobileCart.addEventListener("click", () => {
   shoppingBag.style.display = "block";
-})
+});
