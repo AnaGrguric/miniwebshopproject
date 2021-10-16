@@ -65,6 +65,7 @@ const product4 = {
 };
 
 const productsArr = [product1, product2, product3, product4];
+let newArray;
 
 products.innerHTML = "";
 
@@ -82,14 +83,40 @@ function productsGallery() {
 
 productsGallery();
 
+btnFilter.addEventListener("click", () => {
+  filterPopup.classList.toggle("hidden");
+});
+
+// Add to cart
+
+newArray = productsArr.slice().sort(
+  (a, b) => parseFloat(a.price) - parseFloat(b.price)
+);
+
+console.log(newArray);
+console.log(productsArr)
+
+function filter(){
+  if (filterPrice.checked) {
+    products.innerHTML = "";
+    newArray.map((product) => {
+      const html = `<div class="product">
+          <img src="${product.image}" class="product-image"/>
+          <h6 class="product-name">${product.name}</h6>
+          <p class="product-price">${product.price}kn</p>
+          <button class="btn-add-to-bag">Add to bag</button>
+      </div>`;
+      products.insertAdjacentHTML("beforeend", html);
+    });
+  }
+}
+
+btnFilterApply.addEventListener("click", filter);
+
 const product = document.querySelectorAll(".product");
 const productName = document.querySelector(".product-name");
 const productImg = document.querySelectorAll(".product-image");
 const btnAdd = document.querySelectorAll(".btn-add-to-bag");
-
-btnFilter.addEventListener("click", () => {
-  filterPopup.classList.toggle("hidden");
-});
 
 btnOneImg.addEventListener("click", () => {
   productImg.forEach((img) => img.classList.add("product-image-wider"));
@@ -103,11 +130,13 @@ btnTwoImg.addEventListener("click", () => {
   products.classList.remove("products-column");
 });
 
-// Add to cart
-
 btnAdd.forEach((btn, i) => {
   btn.addEventListener("click", function () {
-    updateShoppingCart(productsArr[i]);
+      if(filterPrice.checked){
+        updateShoppingCart(newArray[i]);
+      } else {
+        updateShoppingCart(productsArr[i]);
+      }
   });
 });
 
@@ -152,11 +181,6 @@ function addProducts(p) {
 }
 
 function onLoad() {
-  /* let productsQuantity = localStorage.getItem("quantity");
-
-  if (productsQuantity) {
-    circle.textContent = productsQuantity;
-  } */
   localStorage.clear();
 }
 
@@ -184,11 +208,11 @@ function renderShoppingCart() {
       addedItems.innerHTML += `<div class="cart-items">
       <p>${item.name}</p>
       <p>x${item.inBag}</p>
-      <p>${item.price * item.inBag}</p>
+      <p>${item.price * item.inBag}kn</p>
       </div>`;
     });
     total.innerHTML = "";
-    total.insertAdjacentHTML("beforeend", productsPrice);
+    total.insertAdjacentHTML("beforeend", `${productsPrice} kn`);
   }
 }
 // payment info
@@ -220,6 +244,7 @@ btnPurchase.addEventListener("click", () => {
     btnPurchase.textContent = "Change payment info";
   } else if (btnPurchase.textContent === "Confirm Order") {
     confirmationPopup.classList.remove("hidden");
+    shoppingBag.classList.add("hidden");
   } else if (addedItems.textContent === "Empty bag :(") {
     alert("Please add items");
   } else {
@@ -233,16 +258,18 @@ btnOk.addEventListener("click", () => {
   localStorage.clear();
 });
 
-// Filter
+//
 
-btnFilterApply.addEventListener("click", () => {
-  if (filterPrice.value == "on") {
-    productsArr.map((x) => x.price);
+function mobile() {
+  if (window.innerWidth <= 768) {
+    shoppingBag.classList.add("hidden");
   }
-});
+}
+
+mobile();
 
 // mobile
 
 mobileCart.addEventListener("click", () => {
-  shoppingBag.style.display = "block";
+  shoppingBag.classList.toggle("hidden");
 });
